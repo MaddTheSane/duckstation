@@ -47,7 +47,7 @@ bool JitCodeBuffer::Allocate(u32 size /* = 64 * 1024 * 1024 */, u32 far_code_siz
   }
 #elif defined(__linux__) || defined(__ANDROID__) || defined(__APPLE__) || defined(__HAIKU__)
   m_code_ptr = static_cast<u8*>(
-    mmap(nullptr, m_total_size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+    mmap(nullptr, m_total_size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0));
   if (!m_code_ptr)
   {
     Log_ErrorPrintf("mmap(RWX, %u) for internal buffer failed: %d", m_total_size, errno);
@@ -195,6 +195,9 @@ void JitCodeBuffer::CommitFarCode(u32 length)
 
 void JitCodeBuffer::Reset()
 {
+#if defined(__APPLE__) && defined(__aarch64__)
+  pthread_jit_write_protect_np(0);
+#endif
   m_free_code_ptr = m_code_ptr + m_guard_size;
   m_code_used = 0;
   std::memset(m_free_code_ptr, 0, m_code_size);
@@ -207,6 +210,9 @@ void JitCodeBuffer::Reset()
     std::memset(m_free_far_code_ptr, 0, m_far_code_size);
     FlushInstructionCache(m_free_far_code_ptr, m_far_code_size);
   }
+#if defined(__APPLE__) && defined(__aarch64__)
+  pthread_jit_write_protect_np(1);
+#endif
 }
 
 void JitCodeBuffer::Align(u32 alignment, u8 padding_value)

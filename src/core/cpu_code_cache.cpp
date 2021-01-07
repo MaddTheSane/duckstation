@@ -138,7 +138,13 @@ void Initialize()
       Panic("Failed to initialize fastmem");
 
     ResetFastMap();
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(0);
+#endif
     CompileDispatcher();
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(1);
+#endif
   }
 #endif
 }
@@ -362,8 +368,14 @@ void Reinitialize()
     if (g_settings.IsUsingFastmem() && !InitializeFastmem())
       Panic("Failed to initialize fastmem");
 
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(0);
+#endif
     ResetFastMap();
     CompileDispatcher();
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(1);
+#endif
   }
 #endif
 }
@@ -373,7 +385,15 @@ void Flush()
   ClearState();
 #ifdef WITH_RECOMPILER
   if (g_settings.IsUsingRecompiler())
+  {
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(0);
+#endif
     CompileDispatcher();
+#if defined(__APPLE__) && defined(__aarch64__)
+    pthread_jit_write_protect_np(1);
+#endif
+  }
 #endif
 }
 

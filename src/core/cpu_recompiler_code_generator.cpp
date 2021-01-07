@@ -27,6 +27,10 @@ bool CodeGenerator::CompileBlock(CodeBlock* block, CodeBlock::HostCodePointer* o
   m_block_start = block->instructions.data();
   m_block_end = block->instructions.data() + block->instructions.size();
 
+#if defined(__APPLE__) && defined(__aarch64__)
+  pthread_jit_write_protect_np(0);
+#endif
+
   EmitBeginBlock();
   BlockPrologue();
 
@@ -60,6 +64,10 @@ bool CodeGenerator::CompileBlock(CodeBlock* block, CodeBlock::HostCodePointer* o
                     block->instructions.size(), block->GetSizeInBytes(), *out_host_code_size);
 
   DebugAssert(m_register_cache.GetUsedHostRegisters() == 0);
+
+#if defined(__APPLE__) && defined(__aarch64__)
+  pthread_jit_write_protect_np(0);
+#endif
 
   m_current_instruction = nullptr;
   m_block_end = nullptr;
