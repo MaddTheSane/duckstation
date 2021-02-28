@@ -2603,7 +2603,7 @@ void CommonHostInterface::SaveSettings(SettingsInterface& si)
 
 void CommonHostInterface::ApplySettings(bool display_osd_messages)
 {
-  Settings old_settings(std::move(g_settings));
+  const Settings old_settings = g_settings;
   {
     std::lock_guard<std::recursive_mutex> guard(m_settings_mutex);
     LoadSettings(*m_settings_interface.get());

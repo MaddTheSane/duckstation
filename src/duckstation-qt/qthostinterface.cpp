@@ -265,7 +265,7 @@ void QtHostInterface::setDefaultSettings()
     return;
   }
 
-  Settings old_settings(std::move(g_settings));
+  const Settings old_settings = g_settings;
   {
     std::lock_guard<std::recursive_mutex> guard(m_settings_mutex);
     SetDefaultSettings(*m_settings_interface.get());
