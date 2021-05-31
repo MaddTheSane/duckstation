@@ -76,6 +76,10 @@ public class GameListEntry {
 
     public long getSize() { return mSize; }
 
+    public String getFileTitle() {
+        return mFileTitle;
+    }
+
     public String getModifiedTime() {
         return mModifiedTime;
     }

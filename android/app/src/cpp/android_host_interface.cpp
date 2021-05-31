@@ -54,6 +54,7 @@ static jmethodID s_EmulationActivity_method_openPauseMenu;
 static jmethodID s_EmulationActivity_method_getInputDeviceNames;
 static jmethodID s_EmulationActivity_method_hasInputDeviceVibration;
 static jmethodID s_EmulationActivity_method_setInputDeviceVibration;
+static jmethodID s_EmulationActivity_method_onGameTitleChanged;
 static jclass s_PatchCode_class;
 static jmethodID s_PatchCode_constructor;
 static jclass s_GameListEntry_class;
@@ -572,6 +573,7 @@ void AndroidHostInterface::EmulationThreadLoop(JNIEnv* env)
       if (m_vibration_enabled)
         UpdateVibration();
     }
+    
 
     // rendering
     {
@@ -1017,6 +1019,8 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
       (s_EmulationActivity_method_onRunningGameChanged =
          env->GetMethodID(s_EmulationActivity_class, "onRunningGameChanged",
                           "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V")) == nullptr ||
+      (s_EmulationActivity_method_onGameTitleChanged =
+         env->GetMethodID(emulation_activity_class, "onGameTitleChanged", "(Ljava/lang/String;)V")) == nullptr ||
       (s_EmulationActivity_method_setVibration = env->GetMethodID(emulation_activity_class, "setVibration", "(Z)V")) ==
         nullptr ||
       (s_EmulationActivity_method_getRefreshRate =

@@ -91,6 +91,11 @@ private:
   float GetRefreshRate() const;
   float GetSurfaceScale(int width, int height) const;
 
+  void CreateImGuiContext();
+  void DestroyImGuiContext();
+
+  void LoadAndConvertSettings();
+
   jobject m_java_object = {};
   jobject m_emulation_activity_object = {};
 

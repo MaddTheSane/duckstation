@@ -86,6 +86,20 @@ bool Pad::DoStateController(StateWrapper& sw, u32 i)
                   Settings::GetControllerTypeName(controller_type), controller_type,
                   g_settings.load_devices_from_save_states ? "yes" : "no");
 
+    m_controllers[i].reset();
+        if (state_controller_type != ControllerType::None)
+        {
+          m_controllers[i] = Controller::Create(state_controller_type, i);
+          if (!sw.DoMarker("Controller") || !m_controllers[i]->DoState(sw, g_settings.load_devices_from_save_states))
+            return false;
+        }
+      }
+      else
+      {
+        g_host_interface->AddFormattedOSDMessage(
+          10.0f, g_host_interface->TranslateString("OSDMessage", "Ignoring mismatched controller type %s in port %u."),
+          Settings::GetControllerTypeName(state_controller_type), i + 1u);
+
     if (g_settings.load_devices_from_save_states)
     {
       m_controllers[i].reset();

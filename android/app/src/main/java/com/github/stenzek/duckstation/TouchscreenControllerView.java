@@ -349,6 +349,7 @@ public class TouchscreenControllerView extends FrameLayout {
         if (code >= 0) {
             buttonView.setButtonCode(mControllerIndex, code);
             buttonView.setHapticFeedback(mHapticFeedback);
+            mButtonViews.add(buttonView);
         } else {
             Log.e("TouchscreenController", String.format("Unknown button name '%s' " +
                     "for '%s'", buttonName, mControllerType));

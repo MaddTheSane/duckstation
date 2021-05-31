@@ -26,6 +26,10 @@ public class AndroidHostInterface {
     private FileHelper mFileHelper;
     private EmulationActivity mEmulationActivity;
 
+    static public native String getScmVersion();
+
+    static public native AndroidHostInterface create(Context context, String userDirectory);
+
     public AndroidHostInterface(Context context, FileHelper fileHelper) {
         this.mContext = context;
         this.mFileHelper = fileHelper;

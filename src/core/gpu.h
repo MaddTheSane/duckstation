@@ -51,9 +51,11 @@ public:
   {
     NTSC_TICKS_PER_LINE = 3413,
     NTSC_HSYNC_TICKS = 200,
+    NTSC_HSYNC_START = NTSC_TICKS_PER_LINE - NTSC_HSYNC_TICKS,
     NTSC_TOTAL_LINES = 263,
     PAL_TICKS_PER_LINE = 3406,
     PAL_HSYNC_TICKS = 200, // actually one more on odd lines
+    PAL_HSYNC_START = PAL_TICKS_PER_LINE - PAL_HSYNC_TICKS,
     PAL_TOTAL_LINES = 314,
   };
 
@@ -159,8 +161,19 @@ public:
   bool ConvertScreenCoordinatesToBeamTicksAndLines(s32 window_x, s32 window_y, float x_scale, u32* out_tick,
                                                    u32* out_line) const;
 
+  // Returns the current beam position.
+  void GetBeamPosition(u32* out_ticks, u32* out_line);
+
+  // Returns the number of system clock ticks until the specified tick/line.
+  TickCount GetSystemTicksUntilTicksAndLine(u32 ticks, u32 line);
+
+  // Returns the number of visible lines.
+  ALWAYS_INLINE u16 GetCRTCActiveStartLine() const { return m_crtc_state.vertical_active_start; }
+  ALWAYS_INLINE u16 GetCRTCActiveEndLine() const { return m_crtc_state.vertical_active_end; }
+
   // Returns the video clock frequency.
   TickCount GetCRTCFrequency() const;
+  u16 GetCRTCDotClockDivider() const { return m_crtc_state.dot_clock_divider; }
 
   // Dumps raw VRAM to a file.
   bool DumpVRAMToFile(const char* filename);
@@ -208,6 +221,8 @@ protected:
 
   // Ticks for hblank/vblank.
   void CRTCTickEvent(TickCount ticks);
+  void SimulateCRTCFast(TickCount ticks);
+  void SimulateCRTCSlow(TickCount ticks);
   void CommandTickEvent(TickCount ticks);
 
   /// Returns 0 if the currently-displayed field is on odd lines (1,3,5,...) or 1 if even (2,4,6,...).
@@ -482,8 +497,12 @@ protected:
     u16 vertical_visible_start;
     u16 vertical_visible_end;
 
+    u16 horizontal_active_start;
+    u16 horizontal_active_end;
     u16 horizontal_display_start;
     u16 horizontal_display_end;
+    u16 vertical_active_start;
+    u16 vertical_active_end;
     u16 vertical_display_start;
     u16 vertical_display_end;
 

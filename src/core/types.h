@@ -123,6 +123,7 @@ enum class ControllerType
   AnalogController,
   AnalogJoystick,
   NamcoGunCon,
+  KonamiJustifier,
   PlayStationMouse,
   NeGcon,
   Count

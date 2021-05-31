@@ -213,8 +213,10 @@ u32 Timers::ReadRegister(u32 offset)
         if (timer_index == 0 || g_gpu->IsCRTCScanlinePending())
           g_gpu->SynchronizeCRTC();
       }
-
-      m_sysclk_event->InvokeEarly();
+      else
+      {
+        m_sysclk_event->InvokeEarly();
+      }
 
       return cs.counter;
     }

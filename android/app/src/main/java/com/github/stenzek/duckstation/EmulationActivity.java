@@ -691,10 +691,14 @@ public class EmulationActivity extends AppCompatActivity implements SurfaceHolde
             if (mTouchscreenController != null) {
                 activityLayout.removeView(mTouchscreenController);
                 mTouchscreenController = null;
+                mVibratorService = null;
             }
         } else {
             if (mTouchscreenController == null) {
                 mTouchscreenController = new TouchscreenControllerView(this);
+                if (vibration)
+                    mVibratorService = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
                 activityLayout.addView(mTouchscreenController);
             }
 
@@ -712,6 +716,7 @@ public class EmulationActivity extends AppCompatActivity implements SurfaceHolde
         if (mTouchscreenController != null) {
             notificationVerticalPosition = 0.3f;
             notificationVerticalDirection = -1.0f;
+            mTouchscreenController.init(0, controllerType, viewType, hapticFeedback);
         }
         AndroidHostInterface.getInstance().setFullscreenUINotificationVerticalPosition(
                 notificationVerticalPosition, notificationVerticalDirection);
