@@ -41,6 +41,8 @@ ConsoleSettingsWidget::ConsoleSettingsWidget(QtHostInterface* host_interface, QW
   SettingWidgetBinder::BindWidgetToBoolSetting(m_host_interface, m_ui.cdromRegionCheck, "CDROM", "RegionCheck", false);
   SettingWidgetBinder::BindWidgetToBoolSetting(m_host_interface, m_ui.cdromLoadImageToRAM, "CDROM", "LoadImageToRAM",
                                                false);
+  SettingWidgetBinder::BindWidgetToBoolSetting(m_host_interface, m_ui.cdromLoadImagePatches, "CDROM",
+                                               "LoadImagePatches", false);
   SettingWidgetBinder::BindWidgetToIntSetting(m_host_interface, m_ui.cdromSeekSpeedup, "CDROM", "SeekSpeedup", 1);
   SettingWidgetBinder::BindWidgetToEnumSetting(m_host_interface, m_ui.multitapMode, "ControllerPorts", "MultitapMode",
                                                &Settings::ParseMultitapModeName, &Settings::GetMultitapModeName,
@@ -65,11 +67,11 @@ ConsoleSettingsWidget::ConsoleSettingsWidget(QtHostInterface* host_interface, QW
     tr("Loads the game image into RAM. Useful for network paths that may become unreliable during gameplay. In some "
        "cases also eliminates stutter when games initiate audio track playback."));
   dialog->registerWidgetHelp(
-    m_ui.cdromReadSpeedup, tr("CDROM Read Speedup"), tr("None (Double Speed)"),
+    m_ui.cdromReadSpeedup, tr("CD-ROM Read Speedup"), tr("None (Double Speed)"),
     tr("Speeds up CD-ROM reads by the specified factor. Only applies to double-speed reads, and is ignored when audio "
        "is playing. May improve loading speeds in some games, at the cost of breaking others."));
   dialog->registerWidgetHelp(
-    m_ui.cdromSeekSpeedup, tr("CDROM Seek Speedup"), tr("None (Normal Speed)"),
+    m_ui.cdromSeekSpeedup, tr("CD-ROM Seek Speedup"), tr("None (Normal Speed)"),
     tr("Reduces the simulated time for the CD-ROM sled to move to different areas of the disc. Can improve loading "
        "times, but crash games which do not expect the CD-ROM to operate faster."));
   dialog->registerWidgetHelp(
@@ -81,6 +83,9 @@ ConsoleSettingsWidget::ConsoleSettingsWidget(QtHostInterface* host_interface, QW
     m_ui.cdromLoadImageToRAM, tr("Preload Image to RAM"), tr("Unchecked"),
     tr("Loads the game image into RAM. Useful for network paths that may become unreliable during gameplay. In some "
        "cases also eliminates stutter when games initiate audio track playback."));
+  dialog->registerWidgetHelp(m_ui.cdromLoadImagePatches, tr("Apply Image Patches"), tr("Unchecked"),
+                             tr("Automatically applies patches to disc images when they are present in the same "
+                                "directory. Currently only PPF patches are supported with this option."));
   dialog->registerWidgetHelp(
     m_ui.multitapMode, tr("Multitap"), tr("Disabled"),
     tr("Enables multitap support on specified controller ports. Leave disabled for games that do "

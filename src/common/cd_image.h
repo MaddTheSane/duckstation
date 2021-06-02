@@ -135,11 +135,17 @@ public:
       BitField<u8, bool, 5, 1> digital_copy_permitted;
       BitField<u8, bool, 6, 1> data;
       BitField<u8, bool, 7, 1> four_channel_audio;
+
+      Control& operator=(const Control& rhs)
+      {
+        bits = rhs.bits;
+        return *this;
+      }
     };
 
     struct
     {
-      Control control;
+      u8 control_bits;
       u8 track_number_bcd;
       u8 index_number_bcd;
       u8 relative_minute_bcd;
@@ -155,6 +161,9 @@ public:
     Data data;
 
     static u16 ComputeCRC(const Data& data);
+
+    Control GetControl() const { return Control{control_bits}; }
+    bool IsData() const { return GetControl().data; }
 
     bool IsCRCValid() const;
 
@@ -205,6 +214,8 @@ public:
   static std::unique_ptr<CDImage> OpenM3uImage(const char* filename, Common::Error* error);
   static std::unique_ptr<CDImage>
   CreateMemoryImage(CDImage* image, ProgressCallback* progress = ProgressCallback::NullProgressCallback);
+  static std::unique_ptr<CDImage> OverlayPPFPatch(const char* filename, std::unique_ptr<CDImage> parent_image,
+                                                  ProgressCallback* progress = ProgressCallback::NullProgressCallback);
 
   // Accessors.
   const std::string& GetFileName() const { return m_filename; }
@@ -226,6 +237,8 @@ public:
   u32 GetFirstTrackNumber() const { return m_tracks.front().track_number; }
   u32 GetLastTrackNumber() const { return m_tracks.back().track_number; }
   u32 GetIndexCount() const { return static_cast<u32>(m_indices.size()); }
+  const std::vector<Track>& GetTracks() const { return m_tracks; }
+  const std::vector<Index>& GetIndices() const { return m_indices; }
   const Track& GetTrack(u32 track) const;
   const Index& GetIndex(u32 i) const;
 
